@@ -34,7 +34,7 @@ has a predecessor and one or zero successors.
 ### Hierarchical Collections
 Family trees and corporate structures are familiar examples of *hierarchical 
 collections*.  Each object except the one at the top has a parent, but possibly
- many successors, aka *children*.
+many successors, aka *children*.
  
 ![Fig 2.2](images/0202_hierarchical_collection.svg)
 
@@ -93,7 +93,7 @@ In Python we abstract things by using (in order from smallest to largest forms
 of abstractions) functions, methods, classes and modules.
 
 Remember you can always explore the interfaces of a collection type by using
- the `dir()` or `help()` methods on them from a shell prompt.
+the `dir()` or `help()` methods on them from a shell prompt.
  
  ```python
 >>> dir(list)
@@ -122,3 +122,163 @@ class list(object)
 ...
 ...
 ```
+
+## Ch. 3 Searching, Sorting and Complexity Analysis
+An algorithm is a computational process that halts with the solution to a
+problem.  There are criteria for measuring the quality of an algorithm,
+obviously correctness is the most important.  The second most important is
+generally speed.
+
+When run on a real computer with finite resouces, other economies come in to
+play.  Everything is a tradeoff between processing time and space and memory.
+
+In this section we'll be introducing tools for complexity analysis - 
+assessing the runtime performance or efficiacy of algorithms and then to
+apply those to search and sort algorithms.
+
+### Measuring the Efficiency of Algorithms
+When choosing algorithms, you often have to settle for a space/time tradeoff.  
+To make valid decisions you need to know how to measure them.
+
+### Measuring the Run Time of an Algorithm
+Using the computer's clock to measure the run time of an algorithm is 
+called *benchmarking* or *profiling* basically you start by determining the
+time the algorithm takes to process a small data set, then do the same on
+larger and larger datasets so you predict how it will perform on datasets
+of any size.
+
+[This program](examples/0301_timing.py) implements a algorithm that counts from 1 to a given
+number.  
+
+The problem size is the number. You could start with the number 10,000,000
+time the algorithm and output the runtime.  Then you can double the number
+and rerun the program.  After you do so 5 or so times you have an idea of
+the efficiacy of the program.
+  
+```text
+Problem Size         Seconds
+    10000000           1.319
+    20000000           2.638
+    40000000           5.276
+    80000000          10.542
+   160000000          21.105
+```
+We can see that the runtime increases linerarly with the problem size.
+
+However if we change the code to include a nested loop like:
+
+```python
+for j in range(problemSize):
+  for k in range(problemSize):
+    work += 1
+    work -+ 1
+```
+
+It runs so long we don't bother measuring.  If we lower the problem to 1000, we
+then get results - we see that when the problem size doubles, the time to run
+increases 4x! 
+
+```text
+Nested loop:
+Problem Size         Seconds
+        1000           0.098
+        2000           0.404
+        4000           1.641
+        8000           6.603
+```
+
+This lets us get accurate predictions of the running times of many algorithms, 
+but note:
+
+* Different hardware performs differently, same with OS.  So do different
+ compilers and programming languages.
+ 
+* Some large data sets it's impractical to measure regardless of the speed of
+ the computer.  Processing could take years or essentially forever.
+ 
+There are ways to measure algorithms that are platform independent however.
+
+### Counting Instructions
+This method is independant of the underlying hardware of software, just be
+aware you are counting instructions in the high level code that the
+algorithm is written, not the instructions in the execuatable machine
+language program.
+
+When do so you need to distinguish between two classes of instructions.
+
+* Instructions that execute the same number of times regardless of the
+ problem size.
+ 
+* Instructions who's execution count varies with problem size.
+
+For now we'll ignore the former because they're usually not a huge influence
+on this kind of analysis.  The latter are usually found in loops or
+recursive functions.  For loops concentrate on instructions performed in
+nested loops or how many iterations that a nested loops performs.  Lets
+take a look at [0302_counting.py](examples/0302_counting.py).
+
+```text
+Problem Size      Iterations
+        1000         1000000
+        2000         4000000
+        4000        16000000
+        8000        64000000
+       16000       256000000
+```
+
+You can see here that the number of iterations increase exponentially.
+
+We can try the same on a program that tracks the number of calls to a
+recursive Fibonacci function for several problem sizes.  We use a counter
+function rather than just incrementing a value here on [0303_countfib.py
+](examples/0303_countfib.py).
+
+This one starts of slow but increases very rapidly after a little while.
+
+```text
+Problem Size       Calls
+           2           1
+           4           5
+           8          41
+          16        1973
+          32     4356617
+```
+
+We run into a similar problem as before - for some datasets the computer won't
+run fast enough to generate counts for large problem sizes.  We need to turn to
+mathematical analysis.
+
+### Measuring the Memory Used by an Algorithm
+
+A complete analysis of an algorithm must include measuring the amount of
+ memory required.  Again focus on growth.
+ 
+### Exercises 3.1
+
+1. Write a tester program that counts and displays the number of iterations of
+     the following loop:
+     
+    ```text
+    while problemSize > 0:
+      problemSize - problemSize // 2
+    ```
+   [Answer](exercises/0301_decrementing_problemsize_count.py)
+
+2. Run the program as you created in Exercise 1 using problem sizes of
+1000, 2000, 4000, 10000 and 100000.  As the problem size doubles or increases
+by a factor of 10, what happens to the number of iterations.
+
+   * As it doubles the increments only increase by 1.  Increasing by a factor
+    of 1000 makes the increments increase by 10.
+
+3. The difference between the results of two calls of the functions 
+`time.time()` is an elapsed time.  Because the operating system might use the CPU for
+part of the time, the elapsed time might not reflect the actual time tha ta
+Python code segment uses the CPU.  Browse the Python documentation for an
+alternative of recording the processing time, and describe how this would
+be done.
+  
+    * timeit is one of the standard ways to time small code snippets.  Put
+     the code into triple quotes and then rune timeit.timeit() on it.
+     
+     

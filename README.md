@@ -281,4 +281,61 @@ be done.
     * timeit is one of the standard ways to time small code snippets.  Put
      the code into triple quotes and then rune timeit.timeit() on it.
      
-     
+## Complexity Analysis.
+
+*Complexity analysis* is a way to determine the efficiency of an algorithm in a
+platform independent way that also bypasses measuring instruction counts.  It
+involves reading the algo and then doing some algebra on pen and paper.
+
+### Orders of complexity.
+
+When you have a single loop in your program it is said to have a problem size
+of *n*.  If you have a nested loop inside that second loop, the nested loop
+iterates *n<sup>2</sup>* times.  For smaller values this is not a hugely
+significant difference, however for larger values of *n* they start to deviate
+rather significantly.
+
+The performance of these algos differ by an *order of complexity*.  The 
+performance of the first algo is said to be *linear* in that there is a
+directly proportional amount of work performed compared to the size of the
+problem (problem size 10, work 10, problem size 100, work 100).  The second
+problem is said to be *quadratic* - the work grows as a function of a square of
+the problem size (problem size 10, work 100, problem size 100, work 10000).
+As the problem size grows, so does the difference in the amount of work
+performed by both.
+
+There are other orders of complexity than linear and quadratic.  A problem
+has *constant* performance if it requires the same amount of work, regardless
+of problem size.  List indexing is an example of this.  This is the best
+possible type of performance you can have.
+
+There is also *logarithmic* complexity.  This is between linear and constant,
+so still very desirable.  It is proportional to *log<sub>2</sub>* of the
+problem size.  When the problem size doubles in size, the work only increases
+by 1.
+
+The true baddies are *polynomial time algorithms* where the work grows at a rate
+of *n<sup>k</sup>*, where *k* is a constant greater than one, eg: 
+*n<sup>2</sup>*, *n<sup>3</sup>*, *n<sup>10</sup>*.
+
+Although *n<sup>2</sup>* is worse than *n<sup>3</sup>* - there are even worse
+types of complexity.  Next is *exponential complexity* - an example of this is
+work that grows at a rate of *2<sup>n</sup>*.  These problems are said to be
+*intractable* for large problem sets.
+
+This graph shows some of the discussed orders of complexity.
+
+![Fig3.1](images/complexity_graph.svg)
+
+### Big-O Notation
+
+We estimate this work rather than measure it exactly.  You might have an
+algorithm that does *6 + 2n<sup>2</sup>* operations, once *n* starts getting
+large, the dominant term becomes so large the others become insignificant.  For
+example we would say the previous example has a complexity of *n<sup>2
+</sup>*.  This is called *asymptotic analysis* (asymptote: a line that
+continually approaches a given curve but does not meet it at any finite
+distance.) A polynomial 2 complexity would be O(*n<sup>2</sup>*).
+
+We describe the complexity using *Big-O Notation* - for example, linear-time
+algorithms have a complexity of O(*n*), 

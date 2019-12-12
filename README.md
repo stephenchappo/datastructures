@@ -335,7 +335,8 @@ large, the dominant term becomes so large the others become insignificant.  For
 example we would say the previous example has a complexity of *n<sup>2
 </sup>*.  This is called *asymptotic analysis* (asymptote: a line that
 continually approaches a given curve but does not meet it at any finite
-distance.) A polynomial 2 complexity would be O(*n<sup>2</sup>*).
+distance.)
 
 We describe the complexity using *Big-O Notation* - for example, linear-time
-algorithms have a complexity of O(*n*), 
+algorithms have a complexity of O(*n*), a polynomial 2 complexity would be 
+O(*n<sup>2</sup>*). 

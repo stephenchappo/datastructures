@@ -340,3 +340,111 @@ distance.)
 We describe the complexity using *Big-O Notation* - for example, linear-time
 algorithms have a complexity of O(*n*), a polynomial 2 complexity would be 
 O(*n<sup>2</sup>*). 
+
+### Exercises 3.2
+1. Assume that each of the following expressions indicates the number of
+ operations performed by an algorithm for a problem size of *n*.  Point out
+  the dominant term of each algorithm and use big-O notation to classify it.
+  a. 2<sup>*n*</sup> - 4*n*<sup>2</sup> + 5*n* 
+    *This is of exponential complexity, the first exponent n is the dominant.*
+  b. 3*n*<sup>2</sup> + 6
+    *This is of polynomial, specifically quadratic complexity*
+  c. *n*<sup>3</sup> + *n*<sup>2</sup> - n
+    *Also polynomial.
+    
+2. For problem size *n*, algorithms A and B perform *n*<sup>2</sup> and 1/2*n
+*<sup>2</sup> + 1/2 n instructions, respectively.  Which algorithm does more
+ work.  Are there particular problem sizes for which one algorithm performs
+  significantly better than the other?  Are there problem sizes where the
+   work done by each is about the same?
+   
+   Algorithm A will generally do more work because the dominant term is
+    halved in problem B.  For larger problem sizes, Algorithm B should
+     be almost twice as efficient as A.  Problem size 1 they do
+     the same work.
+   
+3. At what point does an *n*<sup>4</sup> algorithm begin to perform better
+ than a 2<sup>*n*</sup> algorithm?
+
+   At *n*=16 the first one becomes more efficient.
+  
+       16\*\*4 = 65536
+       2\*\*16 = 65536
+       A < B ? False
+
+       17\*\*4 = 83521
+       2\*\*17 = 131072
+       A < B ? True
+ 
+ ## Search Algorithms
+ 
+ Lets go through few algorithms for searching lists of integers.
+ 
+ ### Search for the Minimum.
+ 
+ This is essentially getting the same output as Python's *min* function.  It
+  assumes the list is not empty and is in arbitrary order.  It gets the first
+   item, says it's the minimum then checks the one to the right.  If the one
+    to the right is smaller it sets that to the minimum until it gets to the
+     end, then it returns the minimum.
+     
+       def indexOfMin(lyst):
+         """Returns the index of the minimum item."""
+         minIndex = 0
+         currentIndex = 1
+         while currentIndex < len(lyst):
+           if lyst[currentIndex] < lyst[minIndex]:
+             minIndex = currentIndex
+           currentIndex += 1
+         return minIndex
+ 
+ So there are three instructions outside the loop - they get discounted.  In
+  the loop there are three more instructions.  There are no nested loops and
+   the algorithm must visit every item in the list to guarantee that it has
+    located the minimum item.  So it must make *n* - 1 comparisons for a list of
+     size *n*.  Making the complexity O(*n*).
+     
+### Sequential Search of List
+
+Python's ``in`` operator is implemented as a method named ```__contains__``` in
+ the ``list`` class.  So we start with the first position and compare to the
+  target.  If the items are equal, return ``True``.  Otherwise move on to the
+   next.  If it gets to the end and hasn't found it, return ``False``.  This
+    is called either a *sequential search* or a *linear search*.  This
+     version is a bit nicer and returns the index of the item or -1 if not
+      found.
+    
+      def sequentialSearch(target, lyst):
+        """Returns the position of the target item if found, 
+        or -1 otherwise."""
+        position = 0
+        while position < len(lyst):
+          if target == lyst[position]:
+            return position
+          position += 1
+        return -1
+      
+The analysis of a sequential search is a bit different from the analysis of a
+ search for a minimum.
+ 
+ ## Best-Case, Worst-Case and Average-Case Performance
+ 
+ The performance of some algorithms depends on the placement of the data to
+  be processed.  If the target is at the beginning of the list it does less
+   work.  For these you can figure out the best, worst and average-case
+    performance.
+    
+ 1. In the worst case, the target is at the end of the list or not in the
+  list.  Then it must visit every item and perform *n* iterations for a list
+   of size *n*.   So the worst case complexity of a sequential search is 
+   O(*n*).
+ 
+ 2.  In the best case it finds it in the first iteration, making it 
+  O(1) complexity.
+ 
+ 3. To calculate the average case, you add the number of iterations to find
+  the target at every position and divide the sum by *n*.  So its (*n* + *n* - 1
+   + *n* - *2* + ... + 1)/*n* or (*n* + 1)/2 iterations.  For very large *n
+   * the constant factor of 2 is insignificant, so we say the average
+    complexity is still O(*n*).
+    

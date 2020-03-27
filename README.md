@@ -434,17 +434,149 @@ The analysis of a sequential search is a bit different from the analysis of a
    work.  For these you can figure out the best, worst and average-case
     performance.
     
+
  1. In the worst case, the target is at the end of the list or not in the
   list.  Then it must visit every item and perform *n* iterations for a list
    of size *n*.   So the worst case complexity of a sequential search is 
    O(*n*).
- 
+ ``
+
  2.  In the best case it finds it in the first iteration, making it 
   O(1) complexity.
  
+
  3. To calculate the average case, you add the number of iterations to find
   the target at every position and divide the sum by *n*.  So its (*n* + *n* - 1
    + *n* - *2* + ... + 1)/*n* or (*n* + 1)/2 iterations.  For very large *n
    * the constant factor of 2 is insignificant, so we say the average
     complexity is still O(*n*).
+
+## Binary Search of a Sorted List
+
+In the case that a list is presorted, we can use this method.
+
+Assume the list is in ascending order.  Binary search first checks the middle
+ item and compares it against its tagrget.  If it's a match it returns the
+  position, if it's higher, it halves the section above the just-checked
+   target, if lower it does the same on the lower section.  It does this
+    until it finds the target.
     
+```python
+def binarySearch(target, sortedLyst):
+  left = 0
+  right = len(sortedLyst)-1
+  while left <= right:
+    midpoint = (left + right) // 2
+    if target == sortedLyst[midpoint]:
+      return midpoint
+    elif target < sortedLyst[midpoint]:
+      right = midpoint - 1
+    else:
+      left = midpoint + 1
+  return -1
+``` 
+
+So there's only a single loop with no nested loops.  The worse case is when
+ the item is not in the list.  In this case the number of operations is the
+  amount of times that the list can be divided until the quotient is 1.  So
+   for a list of size *n* you have to perform *n*/2/2/2/2..../2 until the
+    result is 1.  If *k* is the amount of times you divide *n* by 2 that
+     works out to be *n*/2<sup>*k*</sup> = 1 from that we can get *n* = 
+     2<sup>k</sup> and k = log<sub>2</sub>*n*.  So the worst case we do that
+      many operations, out complexity is O(log<sub>2</sub>*n*).
+
+Binary search is extremely efficient and scales well.  For a list of 10 items
+ the most operations it would have to perform is 4, whereas for a list of 
+ 1,000,000 items it only needs 20!
+
+Binary search is much more efficient than sequential searching but it comes
+ with the added overhead of having to sort the list first.
+ 
+### Comparing Data Items
+Everything we've seen to date assumes that the items are comparable to each
+ other.  In Python that means they are of the same type and recognise the
+  comparison operators ==, < and >.  There are several types that can be
+   compared like this including numbers, strings, lists.  To allow these
+    operators the programmer must assign the `__eq__`, `__lt__` and `__gt__
+    ` methods to the class.  For example the header of `__lt__` looks like:
+    
+`def __lt__(self, other):`
+
+If `self` is less than other it returns `True` otherwise `False`.
+
+For example `SavingsAccount` objects could include 3 fields, a name, a PIN
+ and a balance.  If we wanted them to be sorted by their name we could define
+  the `__lt__` method as such:
+
+```python
+class SavingsAccount(object):
+  """This class represents a savings account
+  with the owner's name, PIN and balance"""
+
+  def __init__(self, name, pin, balance = 0.0):
+    self._name = name
+    self._pin = pin
+    self._balance = balance
+
+  def __lt__(self, other):
+    return self._name < other._name
+
+  # other methods here including __eq__
+```
+
+The above takes advantage of strings being able to be compared with the
+ < operator.  So now you could put all of these accounts into a list and sort
+  them by name easily.
+  
+### Exercises 2.2
+1. Suppose a list contains the values 20, 44, 28, 55, 82, 66, 75, 88, 93 at
+ index positions 0 through 9.  Trace the values of variables `left`, `right
+ ` and `midpoint` in a binary search of this list for the target value of 90
+ , do the same for 44.
+
+ Target 90
+ 0 9 4
+ 5 9 7
+ 8 9 8
+ 9 9 9 not found, returns -1 
+
+ Target 44
+ 0 9  4
+ 0 3  1 found.
+ 
+ ^ ended up getting that wrong.  Forgot to decrement initial value of right
+ . [see here](exercises/0303_binary_search.py)
+ 
+ 2. The method that's usually used to look up an entry in a phone book is not
+  exactly the same as a binary search because, when using a phone book, you
+   don't always go to the midpoint of the sublist being searched.  Instead
+   , you estimate the position of the target based on the alphabetical
+    position of the first letter of the name.  Suggest a modification of the
+     binary search algorithm that emulates this strategy for a list of names
+     .  Is its computational complexity any better than the standard binary
+      search?
+      
+ This would be changing the calculation for finding `midpoint` currently it
+  only uses the average high and low index.  Instead you could get an average
+   of the actual values and take an approximate index based on those, however
+    this would not change the computational complexity.
+ 
+  
+
+
+
+
+    
+For example the smarter bubble sort can terminated when as soon as the list
+ is sorted.  In the best case (list already sorted), the complexity is 
+ O(*n*), which is rare (1/*n*! chance.)  In the worst case the worst case is 
+ O(*n*<sup>2</sup>).  The average case is closer to that latter but
+  calculating that is a little more involved than it was for the sequential
+   search.
+   
+### Exercises 3.4
+
+1. Which configuration of data causes the smallest number of exchanges in a
+ selection sort.  Which configuration of data causes the largest number of
+  exchanges?
+
